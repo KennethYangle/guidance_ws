@@ -1,0 +1,20 @@
+<launch>
+
+<node
+	pkg = "rfly_orb"
+	type = "rfly_orb_Node"
+	name = "rfly_orb"
+	respawn = "true"
+	output = "screen"
+	
+/>
+
+<node
+	pkg = "rfly_navigation"
+	type = "rfly_navigation_Node"
+	name = "rfly_navigation"
+	respawn = "true"
+	
+/>
+
+</launch>
