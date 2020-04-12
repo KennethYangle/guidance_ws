@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rfly_orb)
 
-## Add support for C++11, supported in ROS Kinetic and newer
-# add_definitions(-std=c++11)
+# Add support for C++11, supported in ROS Kinetic and newer
+add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -14,8 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   std_msgs
 )
+find_package(OpenCV 3 REQUIRED)
 
-# set(OpenCV_INCLUDE_DIRS "/opt/ros/indigo/include/opencv-3.1.0-dev")
+set(OpenCV_INCLUDE_DIRS "/opt/ros/kinetic/include/opencv-3.3.1-dev")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

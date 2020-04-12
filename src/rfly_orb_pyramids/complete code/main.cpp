@@ -250,15 +250,13 @@ Mat orb_features_projective(Mat I1, Mat I2){
 		//waitKey(3);
 	
 		//-- Step 1: Detect the keypoints using SURF Detector
-		Ptr<FeatureDetector> detector = Ptr<FeatureDetector>(
-    new ORB());
+		Ptr<ORB> detector = ORB::create();
 		vector<KeyPoint> keypoints1, keypoints2;// initialise keypoint vectors
 		detector->detect( I1, keypoints1 ); // detect the SURF Feature points in I1
 		detector->detect( I2, keypoints2 ); // detect the SURF Feature points in I2
 
 		//-- Step 2: Calculate descriptors (feature vectors)
-		Ptr<DescriptorExtractor> extractor = Ptr<DescriptorExtractor>(
-    new ORB());// Create a 			SurfDescriptorExtractor Object
+		Ptr<ORB> extractor = ORB::create();// Create a 			SurfDescriptorExtractor Object
 		Mat descriptors1, descriptors2;// initialise feature/descriptor vectors
 		extractor->compute( I1, keypoints1, descriptors1 );// get features in I1 
 		extractor->compute( I2, keypoints2, descriptors2 );// get features in I2

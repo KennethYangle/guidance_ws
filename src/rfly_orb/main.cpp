@@ -49,8 +49,7 @@ Mat orb_features_projective(Mat I1, Mat I2){
 		Mat y_flow;		
 	
 		//-- Step 1: Detect the keypoints using SURF Detector
-		Ptr<FeatureDetector> detector = Ptr<FeatureDetector>(
-    new ORB(100,1.2f,8,10,0,2,ORB::HARRIS_SCORE,31));
+		Ptr<ORB> detector = ORB::create(100,1.2f,8,10,0,2,ORB::HARRIS_SCORE,31,20);
 
 
 		vector<KeyPoint> keypoints1, keypoints2;// initialise keypoint vectors
@@ -66,8 +65,7 @@ Mat orb_features_projective(Mat I1, Mat I2){
 		//****** If Else Statement 2 Start Here*****************
 		if(keypoints1.size()>20 && keypoints2.size()>20){
 
-			Ptr<DescriptorExtractor> extractor = Ptr<DescriptorExtractor>(
-    new ORB());// Create a 			SurfDescriptorExtractor Object
+			Ptr<ORB> extractor = ORB::create();// Create a 			SurfDescriptorExtractor Object
 			Mat descriptors1, descriptors2;// initialise feature/descriptor vectors
 			extractor->compute( I1, keypoints1, descriptors1 );// get features in I1 
 			extractor->compute( I2, keypoints2, descriptors2 );// get features in I2

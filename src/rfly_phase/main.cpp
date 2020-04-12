@@ -240,7 +240,7 @@ return flow;
 Mat correlation_flow(Mat I1, Mat I2, Mat hann){
 		I1.convertTo(I164f, CV_64F);
 		I2.convertTo(I264f, CV_64F);
-		shift = phaseCorrelateRes(I164f, I264f, hann);
+		shift = phaseCorrelate(I164f, I264f, hann);
 		Mat flow = Mat::zeros(3,1,CV_32FC1);
 		
 		//if(abs(shift.x)>100 || abs(shift.y)>100){

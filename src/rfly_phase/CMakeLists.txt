@@ -14,8 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   std_msgs
 )
+find_package(OpenCV 3 REQUIRED)
 
-# set(OpenCV_INCLUDE_DIRS "/opt/ros/indigo/include/opencv-3.1.0-dev")
+set(OpenCV_INCLUDE_DIRS "/opt/ros/kinetic/include/opencv-3.3.1-dev")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
