@@ -1,34 +1,26 @@
 <launch>
 
 <node
-	pkg = "rfly_phase"
-	type = "rfly_phase_Node"
-	name = "rfly_phase"
+	pkg = "rfly_orb"
+	type = "rfly_orb_Node"
+	name = "rfly_orb"
 	respawn = "true"
 	
 />
 
 <node
-	pkg = "rfly_navigation"
-	type = "rfly_navigation_Node"
-	name = "rfly_navigation"
+	pkg = "rfly_pyramids"
+	type = "rfly_pyramids_Node"
+	name = "rfly_pyramids"
 	respawn = "true"
 	
 />
 
 <node
-	pkg = "guidance"
-	type = "guidanceNode"
-	name = "GuidanceNode"
+	pkg = "rfly_navigation2"
+	type = "rfly_navigation2_Node"
+	name = "rfly_navigation2"
 	respawn = "true"
-	
-/>
-
-<node
-	pkg = "rosbag"
-	type = "record"
-	name = "rosbag_record_all"
-	args = "-a"
 	
 />
 
