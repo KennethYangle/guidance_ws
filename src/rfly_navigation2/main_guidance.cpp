@@ -311,7 +311,7 @@ void flowpyrCb(const geometry_msgs::Point &msg)
 	dt_pyr = msg.z;
 };
 
-void lidarCb(const sensor_msgs::LaserScan &msg)
+void ultCb(const sensor_msgs::LaserScan &msg)
 {
 	if (!co2)
 	{
@@ -354,8 +354,8 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "orb");
 	//create a ros node handle
 	ros::NodeHandle nh;
-	ros::Subscriber sub1 = nh.subscribe("sim/imu", 1, &imuCb);		   //guidance/left_image
-	ros::Subscriber sub2 = nh.subscribe("sim/lidar", 1, &lidarCb); //guidance/left_image
+	ros::Subscriber sub1 = nh.subscribe("guidance/imu", 1, &imuCb);		   //guidance/left_image
+	ros::Subscriber sub2 = nh.subscribe("guidance/ultrasonic", 1, &ultCb); //guidance/left_image
 	ros::Subscriber sub3 = nh.subscribe("rfly/orb", 1, &floworbCb);		   //guidance/left_image
 	ros::Subscriber sub4 = nh.subscribe("rfly/pyramids", 1, &flowpyrCb);   //guidance/left_image
 
