@@ -1,8 +1,10 @@
 // include ROS Libraries
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
-#include <geometry_msgs/TransformStamped.h>
-#include <sensor_msgs/LaserScan.h>
+#include <sensor_msgs/Imu.h>
+#include <sensor_msgs/PointCloud.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/point_cloud_conversion.h>
 // OpenCV Libraries
 #include <opencv2/opencv.hpp>
 #include "opencv2/imgproc/imgproc.hpp"
@@ -38,7 +40,7 @@ Mat w = Mat::zeros(3, 1, CV_64FC1);
 Mat camera_param = (Mat_<double>(3, 3) << 334.4204, 0, 149.4593, 0, 333.4688, 114.9624, 0, 0, 1);
 
 double R1 = 0.1;
-double a, b, c, d, a1, b1, c1, d1, ds, ds2, time1, time2, delt, Tx_pyr, Ty_pyr, dt_pyr;
+double a, b, c, d, a1, b1, c1, d1, home_ds, ds, ds2, time1, time2, delt, Tx_pyr, Ty_pyr, dt_pyr;
 double x_d = 0;
 double y_d = 0;
 bool co1 = false;
@@ -213,7 +215,7 @@ Mat image_velocity(double u, double v, double Ts)
 }
 
 // Call Back Function
-void imuCb(const geometry_msgs::TransformStamped &msg)
+void imuCb(const sensor_msgs::Imu &msg)
 {
 	if (!co1)
 	{
@@ -233,23 +235,26 @@ void imuCb(const geometry_msgs::TransformStamped &msg)
 		time2 = sec + nsec / 1000000000;
 		delt = time2 - time1;
 
-		double acc1 = msg.transform.translation.x;
-		double acc2 = msg.transform.translation.y;
-		double acc3 = msg.transform.translation.z;
+		double acc1 = msg.linear_acceleration.x;
+		double acc2 = msg.linear_acceleration.y;
+		double acc3 = msg.linear_acceleration.z;
 		Mat Acc = (Mat_<double>(3, 1) << acc1, acc2, acc3);
 
 		a1 = a;
 		b1 = b;
 		c1 = c;
 		d1 = d;
-		a = msg.transform.rotation.w;
-		b = msg.transform.rotation.x;
-		c = msg.transform.rotation.y;
-		d = msg.transform.rotation.z;
+		a = msg.orientation.w;
+		b = msg.orientation.x;
+		c = msg.orientation.y;
+		d = msg.orientation.z;
 
 		Cbe2.copyTo(Cbe1);
 		Cbe2 = getrotation(a, b, c, d);
-		w = quat2rate(delt, a, b, c, d, a1, b1, c1, d1);
+		// w = quat2rate(delt, a, b, c, d, a1, b1, c1, d1);
+		w.at<double>(0, 0) = msg.linear_acceleration.x;
+		w.at<double>(1, 0) = msg.linear_acceleration.y;
+		w.at<double>(2, 0) = msg.linear_acceleration.z;
 
 		lkf_constants lkc = calculate_lkf_constants(Acc, Cbe2, delt);
 		lkf_predict(lkc.Ad, lkc.G);
@@ -311,23 +316,33 @@ void flowpyrCb(const geometry_msgs::Point &msg)
 	dt_pyr = msg.z;
 };
 
-void lidarCb(const sensor_msgs::LaserScan &msg)
+double pointCloud2ToZ(const sensor_msgs::PointCloud2 &msg)
+{
+	sensor_msgs::PointCloud out_pointcloud;
+	sensor_msgs::convertPointCloud2ToPointCloud(msg, out_pointcloud);
+	for (int i=0; i<out_pointcloud.points.size(); i++) {
+		cout << out_pointcloud.points[i].x << ", " << out_pointcloud.points[i].y << ", " << out_pointcloud.points[i].z << endl;
+	}
+	cout << "------" << endl;
+	return out_pointcloud.points[0].z;
+}
+
+void lidarCb(const sensor_msgs::PointCloud2 &msg)
 {
 	if (!co2)
 	{
-		vector<float> data = msg.ranges;
-		ds2 = data[0];
+		home_ds = pointCloud2ToZ(msg);
+		ds2 = 0;
 		ds = ds2;
 		co2 = true;
 	}
 	else
 	{
 		ds = ds2;
-		vector<float> data = msg.ranges;
-		ds2 = data[0];
+		ds2 = pointCloud2ToZ(msg) - home_ds;
 		if (ds2 < 0.05 || ds2 > 20)
 			ds2 = ds;
-		//cout <<"distance is "<<ds2<<endl;
+		cout <<"distance is "<<ds2<<endl;
 	}
 }
 //.........................................................
