@@ -1,6 +1,6 @@
 // include ROS Libraries
 #include <ros/ros.h>
-#include <geometry_msgs/Point.h>
+#include <geometry_msgs/PointStamped.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -20,11 +20,11 @@ using namespace cv;
 
 // Create a publisher object for distance
 ros::Publisher pub_dist;
-geometry_msgs::Point dist_msg;
+geometry_msgs::PointStamped dist_msg;
 
 // Create a publisher object for velocity
 ros::Publisher pub_vel;
-geometry_msgs::Point vel_msg;
+geometry_msgs::PointStamped vel_msg;
 
 // Initialising Certain constant Matrices
 
@@ -274,18 +274,21 @@ void imuCb(const sensor_msgs::Imu &msg)
 		y_d = y_ds + delt * X_world.at<double>(1, 0);
 		double z_d = X.at<double>(3, 0);
 
-		dist_msg.x = x_d;
-		dist_msg.y = y_d;
-		dist_msg.z = z_d;
+		dist_msg.header = msg.header;
+		dist_msg.point.x = x_d;
+		dist_msg.point.y = y_d;
+		dist_msg.point.z = z_d;
 
-		vel_msg.x = X_world.at<double>(0, 0);
-		vel_msg.y = X_world.at<double>(1, 0);
-		vel_msg.z = X_world.at<double>(2, 0);
+		vel_msg.header = msg.header;
+		vel_msg.point.x = X_world.at<double>(0, 0);
+		vel_msg.point.y = X_world.at<double>(1, 0);
+		vel_msg.point.z = X_world.at<double>(2, 0);
 
 		pub_dist.publish(dist_msg);
 		pub_vel.publish(vel_msg);
 
 		cout << "x_d=" << x_d << " y_d=" << y_d << " z_d=" << z_d << endl;
+		cout << "vel_x=" << X_world.at<double>(0, 0) << " vel_y=" << X_world.at<double>(1, 0) << " vel_z=" << X_world.at<double>(2, 0) << endl;
 	}
 };
 
@@ -320,9 +323,9 @@ double pointCloud2ToZ(const sensor_msgs::PointCloud2 &msg)
 {
 	sensor_msgs::PointCloud out_pointcloud;
 	sensor_msgs::convertPointCloud2ToPointCloud(msg, out_pointcloud);
-	for (int i=0; i<out_pointcloud.points.size(); i++) {
-		cout << out_pointcloud.points[i].x << ", " << out_pointcloud.points[i].y << ", " << out_pointcloud.points[i].z << endl;
-	}
+	// for (int i=0; i<out_pointcloud.points.size(); i++) {
+	// 	cout << out_pointcloud.points[i].x << ", " << out_pointcloud.points[i].y << ", " << out_pointcloud.points[i].z << endl;
+	// }
 	cout << "------" << endl;
 	return out_pointcloud.points[0].z;
 }
@@ -340,7 +343,7 @@ void lidarCb(const sensor_msgs::PointCloud2 &msg)
 	{
 		ds = ds2;
 		ds2 = pointCloud2ToZ(msg) - home_ds;
-		if (ds2 < 0.05 || ds2 > 20)
+		if (ds2 < 0.05)
 			ds2 = ds;
 		cout <<"distance is "<<ds2<<endl;
 	}
@@ -374,7 +377,7 @@ int main(int argc, char **argv)
 	ros::Subscriber sub3 = nh.subscribe("rfly/orb", 1, &floworbCb);		   //guidance/left_image
 	ros::Subscriber sub4 = nh.subscribe("rfly/pyramids", 1, &flowpyrCb);   //guidance/left_image
 
-	pub_dist = nh.advertise<geometry_msgs::Point>("rfly/dist", 1);
-	pub_vel = nh.advertise<geometry_msgs::Point>("rfly/velocity", 1);
+	pub_dist = nh.advertise<geometry_msgs::PointStamped>("rfly/dist", 1);
+	pub_vel = nh.advertise<geometry_msgs::PointStamped>("rfly/velocity", 1);
 	ros::spin();
 }
