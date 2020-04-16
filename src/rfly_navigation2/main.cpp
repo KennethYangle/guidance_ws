@@ -37,7 +37,7 @@ Mat R3 = 0.01 * (Mat::eye(3, 3, CV_64FC1));
 Mat X = (Mat_<double>(7, 1) << 0, 0, 0, 0, 0, 0, 0);
 Mat P = Mat::eye(7, 7, CV_64FC1);
 Mat w = Mat::zeros(3, 1, CV_64FC1);
-Mat camera_param = (Mat_<double>(3, 3) << 334.4204, 0, 149.4593, 0, 333.4688, 114.9624, 0, 0, 1);
+Mat camera_param = (Mat_<double>(3, 3) << 320, 0, 160, 0, 320, 120, 0, 0, 1);
 
 double R1 = 0.1;
 double a, b, c, d, a1, b1, c1, d1, home_ds, ds, ds2, time1, time2, delt, Tx_pyr, Ty_pyr, dt_pyr;

@@ -17,5 +17,10 @@
     <remap from="/sim/lidar" to="/airsim_node/Drone0/lidar/LidarSensor1"/>
   </node>
 
+  <node pkg="airsim_environment" type="velocity_control.py" name="trace"/>
+  <!-- <node pkg="airsim_environment" type="result.py" name="result"/> -->
+
   <node pkg="rosservice" type="rosservice" name="takeoff" args="call --wait /airsim_node/Drone0/takeoff true"/>
+  <node name="pos_vel_plot" pkg="rqt_plot" type="rqt_plot" args="/airsim_node/Drone0/odom_local_ned/twist/twist/linear/x /rfly/velocity/point/x" />
+  <node name="underview" pkg="rqt_image_view" type="rqt_image_view" args="/airsim_node/Drone0/UnderView/Scene"/>
 </launch>
