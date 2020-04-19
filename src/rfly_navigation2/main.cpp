@@ -217,6 +217,9 @@ Mat image_velocity(double u, double v, double Ts)
 // Call Back Function
 void imuCb(const sensor_msgs::Imu &msg)
 {
+	// cout << "w: " << msg.orientation.w << ", x: " << msg.orientation.x << ", y: " << msg.orientation.y << ", z: " << msg.orientation.z << endl;
+	// cout << "ax: " << msg.linear_acceleration.x << ", ay: " << msg.linear_acceleration.y << ", az: " << msg.linear_acceleration.z << endl;
+	// cout << "wx: " << msg.angular_velocity.x << ", wy: " << msg.angular_velocity.y << ", wz: " << msg.angular_velocity.z << endl;
 	if (!co1)
 	{
 		//	std_msgs::Header h = msg->header;
@@ -252,9 +255,9 @@ void imuCb(const sensor_msgs::Imu &msg)
 		Cbe2.copyTo(Cbe1);
 		Cbe2 = getrotation(a, b, c, d);
 		// w = quat2rate(delt, a, b, c, d, a1, b1, c1, d1);
-		w.at<double>(0, 0) = msg.linear_acceleration.x;
-		w.at<double>(1, 0) = msg.linear_acceleration.y;
-		w.at<double>(2, 0) = msg.linear_acceleration.z;
+		w.at<double>(0, 0) = msg.angular_velocity.x;
+		w.at<double>(1, 0) = msg.angular_velocity.y;
+		w.at<double>(2, 0) = msg.angular_velocity.z;
 
 		lkf_constants lkc = calculate_lkf_constants(Acc, Cbe2, delt);
 		lkf_predict(lkc.Ad, lkc.G);
