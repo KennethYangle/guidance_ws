@@ -1,18 +1,41 @@
 #!/usr/bin/env python2
 #coding=utf-8
 
+import os
+import scipy.io as sio
 import rospy
 from geometry_msgs.msg import PointStamped
 from nav_msgs.msg import Odometry
 
 def rflyVelCb(msg):
-    pass
+    global start_time, data
+    t = msg.header.stamp.secs + msg.header.stamp.nsecs/1000000000.0
+    if start_time == 0:
+        start_time = t
+    v = [t-start_time, msg.point.x, msg.point.y, msg.point.z]
+    data["vel_obs"].append(v)
 
 def rflyDistCb(msg):
-    pass
+    global start_time, data
+    t = msg.header.stamp.secs + msg.header.stamp.nsecs/1000000000.0
+    if start_time == 0:
+        start_time = t
+    p = [t-start_time, msg.point.x, msg.point.y, msg.point.z]
+    data["pos_obs"].append(p)
 
 def airsimOdomCb(msg):
-    pass
+    global start_time, data, delta_time, file_name
+    t = msg.header.stamp.secs + msg.header.stamp.nsecs/1000000000.0
+    if start_time == 0:
+        start_time = t
+    v = [t-start_time, msg.twist.twist.linear.x, msg.twist.twist.linear.y, msg.twist.twist.linear.z]
+    data["vel_gt"].append(v)
+    p = [t-start_time, msg.pose.pose.position.x, msg.pose.pose.position.y, msg.pose.pose.position.z]
+    data["pos_gt"].append(p)
+    # 5s一存
+    if t-start_time > delta_time:
+        sio.savemat(file_name, data)
+        delta_time += 5
 
 def listener():
     rospy.init_node('result', anonymous=True)
@@ -22,5 +45,10 @@ def listener():
     rospy.Subscriber('rfly/dist', PointStamped, rflyDistCb)
     rospy.spin()
 
-if __name__ == '__main__':
-    listener()
+
+global start_time, data, delta_time, file_name
+file_name = "/home/zhenglong/guidance_ws/src/airsim_environment/matlab/data.mat"
+data = {"vel_obs":[], "pos_obs":[], "vel_gt":[], "pos_gt":[]}
+start_time = 0
+delta_time = 5
+listener()
