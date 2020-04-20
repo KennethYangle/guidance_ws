@@ -47,7 +47,7 @@ def listener():
 
 
 global start_time, data, delta_time, file_name
-file_name = "/home/zhenglong/guidance_ws/src/airsim_environment/matlab/data.mat"
+file_name = "/home/zhenglong/guidance_ws/src/airsim_environment/matlab/data_circle.mat"
 data = {"vel_obs":[], "pos_obs":[], "vel_gt":[], "pos_gt":[]}
 start_time = 0
 delta_time = 5

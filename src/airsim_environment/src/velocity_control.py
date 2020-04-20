@@ -15,8 +15,12 @@ def talker():
     #更新频率是1hz
     rate = rospy.Rate(50) 
     msg = VelCmd()
+    # # line
+    # msg.twist.linear.x = 1
+    # circle
     msg.twist.linear.x = 1
-    msg.twist.linear.z = -0.1
+    msg.twist.linear.z = -0.2
+    msg.twist.angular.z = 0.03
     while not rospy.is_shutdown():
         pub.publish(msg)
         rate.sleep()
