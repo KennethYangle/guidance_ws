@@ -1,26 +1,6 @@
 <?xml version="1.0"?>
 
 <launch>
-  <include file="$(find airsim_ros_pkgs)/launch/airsim_node.launch">
-  </include>
-
-  <node pkg="rfly_orb" type="rfly_orb_Node" name="rfly_orb">
-    <remap from="/guidance/left_image" to="/airsim_node/Drone0/UnderView/Scene"/>
-  </node>
-
-  <node pkg="rfly_pyramids" type="rfly_pyramids_Node" name="rfly_pyramids">
-    <remap from="/guidance/left_image" to="/airsim_node/Drone0/UnderView/Scene"/>
-  </node>
-
-  <node pkg="rfly_navigation2" type="rfly_navigation2_Node" name="rfly_navigation2">
-    <remap from="/sim/imu" to="/airsim_node/Drone0/imu/Imu"/>
-    <remap from="/sim/lidar" to="/airsim_node/Drone0/lidar/LidarSensor1"/>
-  </node>
-
-  <node pkg="airsim_environment" type="velocity_control.py" name="trace"/>
-  <node pkg="airsim_environment" type="result.py" name="result"/>
-
-  <node pkg="rosservice" type="rosservice" name="takeoff" args="call --wait /airsim_node/Drone0/takeoff true"/>
-  <node name="pos_vel_plot" pkg="rqt_plot" type="rqt_plot" args="/airsim_node/Drone0/odom_local_ned/twist/twist/linear/x /rfly/velocity/point/x" />
-  <node name="underview" pkg="rqt_image_view" type="rqt_image_view" args="/airsim_node/Drone0/UnderView/Scene"/>
+  <include file="$(find airsim_environment)/launch/airnode_with_takeoff.launch"/>
+  <include file="$(find airsim_environment)/launch/rfly_node.launch"/>
 </launch>

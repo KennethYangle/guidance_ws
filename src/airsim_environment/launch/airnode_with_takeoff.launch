@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <include file="$(find airsim_ros_pkgs)/launch/airsim_node.launch"/>
+  <node pkg="rosservice" type="rosservice" name="takeoff" args="call --wait /airsim_node/Drone0/takeoff true"/>
+</launch>

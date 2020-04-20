@@ -20,7 +20,7 @@ def rflyDistCb(msg):
     t = msg.header.stamp.secs + msg.header.stamp.nsecs/1000000000.0
     if start_time == 0:
         start_time = t
-    p = [t-start_time, msg.point.x, msg.point.y, msg.point.z]
+    p = [t-start_time, msg.point.x, msg.point.y, -msg.point.z]
     data["pos_obs"].append(p)
 
 def airsimOdomCb(msg):
