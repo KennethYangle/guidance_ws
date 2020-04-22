@@ -39,7 +39,7 @@ Mat P = Mat::eye(7, 7, CV_64FC1);
 Mat w = Mat::zeros(3, 1, CV_64FC1);
 Mat camera_param = (Mat_<double>(3, 3) << 320, 0, 160, 0, 320, 120, 0, 0, 1);
 
-double R1 = 0.1;
+double R1 = 0.001;
 double a, b, c, d, a1, b1, c1, d1, home_ds, ds, ds2, time1, time2, delt, Tx_pyr, Ty_pyr, dt_pyr;
 double x_d = 0;
 double y_d = 0;
@@ -65,7 +65,7 @@ struct lkf_constants
 lkf_constants calculate_lkf_constants(Mat Acc, Mat Cbe, double Ts)
 {
 	lkf_constants L;
-	Mat F = 9.8 * Acc;
+	Mat F = Acc;
 	double g = 9.8;
 	Mat Ad = (Mat_<double>(7, 7) << 1, 0, 0, 0, -Ts, 0, 0, 0, 1, 0, 0, 0, -Ts, 0, 0, 0, 1, 0, 0, 0, -Ts, 0, 0, -Ts, 1, 0, 0, Ts * Ts / 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1);
 
@@ -305,12 +305,12 @@ void floworbCb(const geometry_msgs::Point &msg)
 	if (dt == 0)
 	{
 		im_vel = image_velocity(Tx_pyr, Ty_pyr, dt_pyr);
-		cout << "orb" << endl;
+		cout << "pyramids" << endl;
 	}
 	else
 	{
 		im_vel = image_velocity(Tx, Ty, dt);
-		cout << "pyramids" << endl;
+		cout << "orb" << endl;
 	}
 	lkf_update(im_vel, 1);
 };
