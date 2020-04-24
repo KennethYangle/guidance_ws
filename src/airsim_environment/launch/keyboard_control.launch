@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<launch>
+  <include file="$(find airsim_ros_pkgs)/launch/airsim_node.launch"/>
+
+  <node pkg="rfly_orb" type="rfly_orb_Node" name="rfly_orb">
+    <remap from="/guidance/left_image" to="/airsim_node/Drone0/UnderView/Scene"/>
+  </node>
+
+  <node pkg="rfly_pyramids" type="rfly_pyramids_Node" name="rfly_pyramids">
+    <remap from="/guidance/left_image" to="/airsim_node/Drone0/UnderView/Scene"/>
+  </node>
+
+  <node pkg="rfly_navigation2" type="rfly_navigation2_Node" name="rfly_navigation2">
+    <remap from="/sim/imu" to="/airsim_node/Drone0/imu/Imu"/>
+    <remap from="/sim/lidar" to="/airsim_node/Drone0/lidar/LidarSensor1"/>
+  </node>
+
+  <node pkg="airsim_environment" type="result.py" name="result"/>
+  <include file="$(find airsim_teleop)/launch/teleop_twist_keyboard.launch"/>
+
+  <node name="underview" pkg="rqt_image_view" type="rqt_image_view" args="/airsim_node/Drone0/UnderView/Scene"/>
+</launch>

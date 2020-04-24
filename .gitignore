@@ -5,3 +5,5 @@ devel/
 *.zip
 *log*
 data.mat
+*.pyc
+*.bag

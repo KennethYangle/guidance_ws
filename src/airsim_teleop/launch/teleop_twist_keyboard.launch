@@ -1,5 +1,0 @@
-<launch>
-<node pkg="airsim_teleop" type="teleop_twist_keyboard.py" name="airsim_teleop_twist" output="screen">
-
-</node>
-</launch>

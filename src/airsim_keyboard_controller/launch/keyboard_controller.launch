@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+	<!-- Launches the keyboard controller -->
+	<node name="keyboard_controller" pkg="airsim_keyboard_controller" type="keyboard_controller.py" required="true"/>
+</launch>
