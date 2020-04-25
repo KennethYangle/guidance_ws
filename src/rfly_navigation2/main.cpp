@@ -52,6 +52,10 @@ bool co1 = false;
 bool co2 = false;
 bool co3 = false;
 int imucnt = 0;
+const int imuint = 1;
+const int que_len = 10;
+deque<geometry_msgs::PointStamped> dist_msg_que(que_len);
+deque<geometry_msgs::PointStamped> vel_msg_que(que_len);
 
 //...................Function Definition for Skew Matrix...........
 Mat skewmatrix(Mat v)
@@ -225,7 +229,7 @@ Mat image_velocity(double u, double v, double Ts)
 void imuCb(const sensor_msgs::Imu &msg)
 {
 	imucnt++;
-	if (imucnt % 10 != 1)
+	if (imucnt % imuint != 0)
 		return;
 	// cout << "w: " << msg.orientation.w << ", x: " << msg.orientation.x << ", y: " << msg.orientation.y << ", z: " << msg.orientation.z << endl;
 	// cout << "ax: " << msg.linear_acceleration.x << ", ay: " << msg.linear_acceleration.y << ", az: " << msg.linear_acceleration.z << endl;
@@ -287,21 +291,39 @@ void imuCb(const sensor_msgs::Imu &msg)
 		y_d = y_ds + delt * X_world.at<double>(1, 0);
 		double z_d = X.at<double>(3, 0);
 
-		dist_msg.header = msg.header;
-		dist_msg.point.x = x_d;
-		dist_msg.point.y = y_d;
-		dist_msg.point.z = -z_d;
+		geometry_msgs::PointStamped dist_msg_back;
+		dist_msg_back.header = msg.header;
+		dist_msg_back.point.x = x_d;
+		dist_msg_back.point.y = y_d;
+		dist_msg_back.point.z = -z_d;
 
-		vel_msg.header = msg.header;
-		vel_msg.point.x = X_world.at<double>(0, 0);
-		vel_msg.point.y = X_world.at<double>(1, 0);
-		vel_msg.point.z = X_world.at<double>(2, 0);
+		auto dist_msg_front = dist_msg_que.front();
+		dist_msg_que.pop_front();
+		dist_msg.header = dist_msg_back.header;
+		dist_msg.point.x += (dist_msg_back.point.x - dist_msg_front.point.x) / que_len;
+		dist_msg.point.y += (dist_msg_back.point.y - dist_msg_front.point.y) / que_len;
+		dist_msg.point.z += (dist_msg_back.point.z - dist_msg_front.point.z) / que_len;
+		dist_msg_que.push_back(dist_msg_back);
 
-		pub_dist.publish(dist_msg);
-		pub_vel.publish(vel_msg);
+		geometry_msgs::PointStamped vel_msg_back;
+		vel_msg_back.header = msg.header;
+		vel_msg_back.point.x = X_world.at<double>(0, 0);
+		vel_msg_back.point.y = X_world.at<double>(1, 0);
+		vel_msg_back.point.z = X_world.at<double>(2, 0);
 
-		cout << "x_d=" << x_d << " y_d=" << y_d << " z_d=" << z_d << endl;
-		cout << "vel_x=" << X_world.at<double>(0, 0) << " vel_y=" << X_world.at<double>(1, 0) << " vel_z=" << X_world.at<double>(2, 0) << endl;
+		auto vel_msg_front = vel_msg_que.front();
+		vel_msg_que.pop_front();
+		vel_msg.header = vel_msg_back.header;
+		vel_msg.point.x += (vel_msg_back.point.x - vel_msg_front.point.x) / que_len;
+		vel_msg.point.y += (vel_msg_back.point.y - vel_msg_front.point.y) / que_len;
+		vel_msg.point.z += (vel_msg_back.point.z - vel_msg_front.point.z) / que_len;
+		vel_msg_que.push_back(vel_msg_back);
+
+		// pub_dist.publish(dist_msg);
+		// pub_vel.publish(vel_msg);
+
+		// cout << "x_d=" << x_d << " y_d=" << y_d << " z_d=" << z_d << endl;
+		// cout << "vel_x=" << X_world.at<double>(0, 0) << " vel_y=" << X_world.at<double>(1, 0) << " vel_z=" << X_world.at<double>(2, 0) << endl;
 	}
 };
 
@@ -397,5 +419,13 @@ int main(int argc, char **argv)
 	pub_dist = nh.advertise<geometry_msgs::PointStamped>("rfly/dist", 1);
 	pub_vel = nh.advertise<geometry_msgs::PointStamped>("rfly/velocity", 1);
 	pub_feature = nh.advertise<std_msgs::Bool>("rfly/feature", 1);
-	ros::spin();
+
+	ros::Rate loop_rate(20);
+	while (ros::ok())
+	{
+		pub_dist.publish(dist_msg);
+		pub_vel.publish(vel_msg);
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
 }
