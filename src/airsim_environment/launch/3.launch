@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node pkg="rosbag" type="play" name="bag_play" args="$(find airsim_environment)/bag/tel.bag"/>
+  <node pkg="rosbag" type="record" name="bag_record" args="-a -O $(find airsim_environment)/bag/env.bag"/>
+  <node name="underview" pkg="rqt_image_view" type="rqt_image_view" args="/airsim_node/Drone0/UnderView/Scene"/>
+</launch>

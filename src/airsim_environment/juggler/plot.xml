@@ -1,0 +1,181 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root version="2.3.8">
+ <tabbed_widget name="Main Window" parent="main_window">
+  <plotmatrix rows="3" columns="3" tab_name="plot">
+   <plot row="0" col="0">
+    <range bottom="-5.545533" left="-2.940077" top="3.329823" right="13.094003"/>
+    <limitY/>
+    <curve name="/airsim_node/Drone0/odom_local_ned/pose/position/[x;y]" G="119" curve_x="/airsim_node/Drone0/odom_local_ned/pose/position/x" B="180" custom_transform="XYPlot" R="31" curve_y="/airsim_node/Drone0/odom_local_ned/pose/position/y"/>
+    <curve name="/rfly/dist/point/[x;y]" G="39" curve_x="/rfly/dist/point/x" B="40" custom_transform="XYPlot" R="214" curve_y="/rfly/dist/point/y"/>
+    <transform value="XYPlot"/>
+   </plot>
+   <plot row="1" col="0">
+    <range bottom="-4.610374" left="0.000000" top="3.329823" right="82.653612"/>
+    <limitY/>
+    <curve name="/airsim_node/Drone0/odom_local_ned/pose/position/y" G="76" B="193" custom_transform="noTransform" R="241"/>
+    <curve name="/rfly/dist/point/y" G="103" B="189" custom_transform="noTransform" R="148"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot row="2" col="0">
+    <range bottom="-1.761654" left="0.000000" top="1.338126" right="82.653612"/>
+    <limitY/>
+    <curve name="/airsim_node/Drone0/odom_local_ned/twist/linear/x" G="119" B="180" custom_transform="noTransform" R="31"/>
+    <curve name="/rfly/velocity/point/x" G="39" B="40" custom_transform="noTransform" R="214"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot row="0" col="1">
+    <range bottom="-0.368261" left="0.000000" top="9.595707" right="82.653612"/>
+    <limitY/>
+    <curve name="/airsim_node/Drone0/odom_local_ned/pose/position/x" G="201" B="56" custom_transform="noTransform" R="26"/>
+    <curve name="/rfly/dist/point/x" G="127" B="14" custom_transform="noTransform" R="255"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot row="1" col="1">
+    <range bottom="-3.142234" left="0.000000" top="0.076684" right="82.653612"/>
+    <limitY/>
+    <curve name="/airsim_node/Drone0/odom_local_ned/pose/position/z" G="190" B="207" custom_transform="noTransform" R="23"/>
+    <curve name="/rfly/dist/point/z" G="189" B="34" custom_transform="noTransform" R="188"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot row="2" col="1">
+    <range bottom="-2.047903" left="0.000000" top="2.053348" right="82.653612"/>
+    <limitY/>
+    <curve name="/airsim_node/Drone0/odom_local_ned/twist/linear/y" G="201" B="56" custom_transform="noTransform" R="26"/>
+    <curve name="/rfly/velocity/point/y" G="127" B="14" custom_transform="noTransform" R="255"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot row="0" col="2">
+    <range bottom="-0.025000" left="0.151300" top="1.025000" right="82.631573"/>
+    <limitY/>
+    <curve name="/rfly/feature/data" G="76" B="193" custom_transform="noTransform" R="241"/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot row="1" col="2">
+    <range bottom="0.000000" left="0.000000" top="1.000000" right="1.000000"/>
+    <limitY/>
+    <transform value="noTransform"/>
+   </plot>
+   <plot row="2" col="2">
+    <range bottom="0.000000" left="0.000000" top="1.000000" right="1.000000"/>
+    <limitY/>
+    <transform value="noTransform"/>
+   </plot>
+  </plotmatrix>
+  <currentPlotMatrix index="0"/>
+ </tabbed_widget>
+ <use_relative_time_offset enabled="1"/>
+ <!-- - - - - - - - - - - - - - - -->
+ <!-- - - - - - - - - - - - - - - -->
+ <Plugins>
+  <plugin ID="DataLoad CSV">
+   <default time_axis=""/>
+  </plugin>
+  <plugin ID="DataLoad ROS bags">
+   <use_header_stamp value="false"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin ID="DataLoad ULog"/>
+  <plugin ID="ROS Topic Subscriber">
+   <use_header_stamp value="false"/>
+   <use_renaming_rules value="true"/>
+   <discard_large_arrays value="true"/>
+   <max_array_size value="100"/>
+  </plugin>
+  <plugin status="idle" ID="ROS /rosout Visualization"/>
+  <plugin status="idle" ID="ROS Topic Re-Publisher"/>
+ </Plugins>
+ <!-- - - - - - - - - - - - - - - -->
+ <previouslyLoaded_Datafiles>
+  <fileInfo prefix="" filename="/home/zhenglong/guidance_ws/src/airsim_environment/bag/data.bag">
+   <selected_datasources value="/airsim_node/Drone0/odom_local_ned;/rfly/dist;/rfly/velocity;/rfly/feature"/>
+   <plugin ID="DataLoad ROS bags">
+    <use_header_stamp value="false"/>
+    <use_renaming_rules value="true"/>
+    <discard_large_arrays value="true"/>
+    <max_array_size value="100"/>
+   </plugin>
+  </fileInfo>
+ </previouslyLoaded_Datafiles>
+ <!-- - - - - - - - - - - - - - - -->
+ <customMathEquations/>
+ <snippets>
+  <snippet name="1st_derivative" language="JS">
+   <global>var prevX = 0
+var prevY = 0</global>
+   <equation>dx = time - prevX
+dy = value - prevY
+prevX = time
+prevY = value
+
+return dy/dx</equation>
+  </snippet>
+  <snippet name="1st_order_lowpass" language="JS">
+   <global>var prevY = 0
+var alpha = 0.1</global>
+   <equation>prevY = alpha * value + (1.-alpha) * prevY
+
+return prevY</equation>
+  </snippet>
+  <snippet name="2D_velocity" language="JS">
+   <global>var prev_x = 0
+var prev_y = 0
+var prev_t = 0</global>
+   <equation>X = $$your_odometry/position/x$$
+Y = $$your_odometry/position/y$$
+
+var dist = sqrt( (X-prev_x)*(X-prev_x) + (Y-prev_y)*(Y-prev_y) )
+var dT = time - prev_t
+
+prev_x = X
+prev_y = Y
+prev_t = time
+
+return dist / dT</equation>
+  </snippet>
+  <snippet name="average_two_curves" language="JS">
+   <global></global>
+   <equation>a = $$PLOT_A$$
+b = $$PLOT_B$$
+
+return (a+b)/2</equation>
+  </snippet>
+  <snippet name="integral" language="JS">
+   <global>var integral = 0</global>
+   <equation>integral += value
+return integral</equation>
+  </snippet>
+  <snippet name="rad_to_deg" language="JS">
+   <global></global>
+   <equation>return value*180/3.1417</equation>
+  </snippet>
+  <snippet name="remove_offset" language="JS">
+   <global>var is_first = true
+var first_value = 0</global>
+   <equation>if (is_first)
+{
+  is_first = false
+  first_value = value
+}
+
+return value - first_value</equation>
+  </snippet>
+  <snippet name="yaw_from_quaternion" language="JS">
+   <global>// source: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+
+function quaternionToYaw(x, y, z, w)
+{
+  // yaw (z-axis rotation)
+  t1 = 2.0 * (w * z + x * y);
+  t2 = 1.0 - 2.0 * (y * y + z * z);
+  yaw = Math.atan2(t1, t2);
+
+  return yaw
+}</global>
+   <equation>return quaternionToYaw(x, y, z, w);</equation>
+  </snippet>
+ </snippets>
+ <!-- - - - - - - - - - - - - - - -->
+</root>
+

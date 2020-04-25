@@ -21,6 +21,7 @@
 using namespace std;
 using namespace cv; 
 
+const int orb_th = 10;
 static const string OPENCV_WINDOW = "Image window1";
 //static const string I2_WINDOW = "Image window2";
 
@@ -63,7 +64,7 @@ Mat orb_features_projective(Mat I1, Mat I2){
 		//****** If Else Statement 1 Ends Here*****************
 
 		//****** If Else Statement 2 Start Here*****************
-		if(keypoints1.size()>20 && keypoints2.size()>20){
+		if(keypoints1.size()>orb_th && keypoints2.size()>orb_th){
 
 			Ptr<ORB> extractor = ORB::create();// Create a 			SurfDescriptorExtractor Object
 			Mat descriptors1, descriptors2;// initialise feature/descriptor vectors
@@ -116,7 +117,7 @@ Mat orb_features_projective(Mat I1, Mat I2){
 			scene.push_back( keypoints2[ good_matches[i].trainIdx ].pt );
 			}
 			//****** If Else Statement 3 STARTS Here*****************
-			if(good_matches.size() > 20){
+			if(good_matches.size() > orb_th){
 			Mat mask;
 			try{
        			Mat H1 = findHomography( obj, scene, mask, CV_RANSAC,5 );
@@ -196,8 +197,8 @@ void imageCb(const sensor_msgs::ImageConstPtr& msg){
 		float check = flow_orb.at<float>(2,0);
 		if(check == 1)
 		{
-		tform_msg.x = 1.2958*(flow_orb.at<float>(0,0));
-		tform_msg.y = 1.2958*(flow_orb.at<float>(1,0));
+		tform_msg.x = 1*(flow_orb.at<float>(0,0));
+		tform_msg.y = 1*(flow_orb.at<float>(1,0));
 		tform_msg.z = delt;
 		}
 		else

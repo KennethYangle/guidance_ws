@@ -8,7 +8,6 @@ from sensor_msgs import point_cloud2
 def callback_pointcloud(data):
     assert isinstance(data, PointCloud2)
     gen = point_cloud2.read_points(data)
-    print type(gen)
     for p in gen:
         print p 
 

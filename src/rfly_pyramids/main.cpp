@@ -276,8 +276,8 @@ void imageCb(const sensor_msgs::ImageConstPtr& msg){
 
 		Mat flow_pyramids = pyramids(cv_ptr_I1->image, cv_ptr_I2->image);
 
-		tform_msg.x = 1.8*(flow_pyramids.at<float>(0,0));
-		tform_msg.y = 1.8*(flow_pyramids.at<float>(1,0));
+		tform_msg.x = 1*(flow_pyramids.at<float>(0,0));
+		tform_msg.y = 1*(flow_pyramids.at<float>(1,0));
 		tform_msg.z = delt;
 
 		tform_pub.publish(tform_msg);

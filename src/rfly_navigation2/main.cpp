@@ -5,6 +5,7 @@
 #include <sensor_msgs/PointCloud.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/point_cloud_conversion.h>
+#include <std_msgs/Bool.h>
 // OpenCV Libraries
 #include <opencv2/opencv.hpp>
 #include "opencv2/imgproc/imgproc.hpp"
@@ -26,6 +27,10 @@ geometry_msgs::PointStamped dist_msg;
 ros::Publisher pub_vel;
 geometry_msgs::PointStamped vel_msg;
 
+// Create a publisher object for feature type
+ros::Publisher pub_feature;
+std_msgs::Bool feature_msg;
+
 // Initialising Certain constant Matrices
 
 Mat Cbe1 = Mat::eye(3, 3, CV_64FC1);
@@ -46,6 +51,8 @@ double y_d = 0;
 bool co1 = false;
 bool co2 = false;
 bool co3 = false;
+int imucnt = 0;
+
 //...................Function Definition for Skew Matrix...........
 Mat skewmatrix(Mat v)
 {
@@ -66,7 +73,7 @@ lkf_constants calculate_lkf_constants(Mat Acc, Mat Cbe, double Ts)
 {
 	lkf_constants L;
 	Mat F = Acc;
-	double g = 9.8;
+	double g = 1;
 	Mat Ad = (Mat_<double>(7, 7) << 1, 0, 0, 0, -Ts, 0, 0, 0, 1, 0, 0, 0, -Ts, 0, 0, 0, 1, 0, 0, 0, -Ts, 0, 0, -Ts, 1, 0, 0, Ts * Ts / 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1);
 
 	double c31 = Cbe.at<double>(2, 0);
@@ -203,7 +210,7 @@ Mat image_velocity(double u, double v, double Ts)
 	Mat Ep2 = -ds2 * p2 / (e3t * Cbe2 * p2);
 
 	Mat I = Mat::eye(3, 3, CV_64FC1);
-	Mat sk_w = M_PI / 180 * skewmatrix(wc);
+	Mat sk_w = skewmatrix(wc);
 	Mat Stav = (Ep1 - (I + Ts * sk_w) * Ep2) / Ts;
 	//Stav = (Ep1-(eye(3,3)+Ts*skewmatrix(pi/180*w))*Ep2)/Ts;
 
@@ -217,6 +224,9 @@ Mat image_velocity(double u, double v, double Ts)
 // Call Back Function
 void imuCb(const sensor_msgs::Imu &msg)
 {
+	imucnt++;
+	if (imucnt % 10 != 1)
+		return;
 	// cout << "w: " << msg.orientation.w << ", x: " << msg.orientation.x << ", y: " << msg.orientation.y << ", z: " << msg.orientation.z << endl;
 	// cout << "ax: " << msg.linear_acceleration.x << ", ay: " << msg.linear_acceleration.y << ", az: " << msg.linear_acceleration.z << endl;
 	// cout << "wx: " << msg.angular_velocity.x << ", wy: " << msg.angular_velocity.y << ", wz: " << msg.angular_velocity.z << endl;
@@ -280,7 +290,7 @@ void imuCb(const sensor_msgs::Imu &msg)
 		dist_msg.header = msg.header;
 		dist_msg.point.x = x_d;
 		dist_msg.point.y = y_d;
-		dist_msg.point.z = z_d;
+		dist_msg.point.z = -z_d;
 
 		vel_msg.header = msg.header;
 		vel_msg.point.x = X_world.at<double>(0, 0);
@@ -305,14 +315,17 @@ void floworbCb(const geometry_msgs::Point &msg)
 	if (dt == 0)
 	{
 		im_vel = image_velocity(Tx_pyr, Ty_pyr, dt_pyr);
+		feature_msg.data = false;
 		cout << "pyramids" << endl;
 	}
 	else
 	{
 		im_vel = image_velocity(Tx, Ty, dt);
+		feature_msg.data = true;
 		cout << "orb" << endl;
 	}
 	lkf_update(im_vel, 1);
+	pub_feature.publish(feature_msg);
 };
 
 void flowpyrCb(const geometry_msgs::Point &msg)
@@ -337,7 +350,8 @@ void lidarCb(const sensor_msgs::PointCloud2 &msg)
 {
 	if (!co2)
 	{
-		home_ds = pointCloud2ToZ(msg);
+		// calibrate in different home point
+		home_ds = 1.195547;
 		ds2 = 0;
 		ds = ds2;
 		co2 = true;
@@ -382,5 +396,6 @@ int main(int argc, char **argv)
 
 	pub_dist = nh.advertise<geometry_msgs::PointStamped>("rfly/dist", 1);
 	pub_vel = nh.advertise<geometry_msgs::PointStamped>("rfly/velocity", 1);
+	pub_feature = nh.advertise<std_msgs::Bool>("rfly/feature", 1);
 	ros::spin();
 }
