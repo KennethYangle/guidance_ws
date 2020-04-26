@@ -51,11 +51,11 @@ double y_d = 0;
 bool co1 = false;
 bool co2 = false;
 bool co3 = false;
-int imucnt = 0;
-const int imuint = 1;
 const int que_len = 10;
 deque<geometry_msgs::PointStamped> dist_msg_que(que_len);
 deque<geometry_msgs::PointStamped> vel_msg_que(que_len);
+int orb_call_cnt = 0;
+int pry_call_cnt = 0;
 
 //...................Function Definition for Skew Matrix...........
 Mat skewmatrix(Mat v)
@@ -185,8 +185,12 @@ Mat quat2rate(double delt, double a, double b, double c, double d, double a1, do
 }
 //.........................................................
 //..........Function Definition for Image Velocity.........
+int img_vel_cnt = 0;
+double vel_total_time = 0;
 Mat image_velocity(double u, double v, double Ts)
 {
+	img_vel_cnt++;
+	ros::Time begin_time = ros::Time::now();
 
 	Mat P1 = (Mat_<double>(2, 1) << 160, 120);
 	Mat P2 = (Mat_<double>(2, 1) << 160 - u, 120 - v);
@@ -222,14 +226,24 @@ Mat image_velocity(double u, double v, double Ts)
 	double Ty = Stav.at<double>(0, 1);
 	Mat temp1 = (Mat_<double>(3, 1) << Tx, Ty, 0);
 	Mat vel = Cbit * temp1;
+
+	vel_total_time += (ros::Time::now() - begin_time).toSec();
+	if (img_vel_cnt % 10 == 0) {
+		cout << "img_vel_cnt: " << img_vel_cnt << ", vel_total_time: " << vel_total_time << endl;
+		cout << "orb_call_cnt: " << orb_call_cnt << ", pry_call_cnt: " << pry_call_cnt << endl;
+	}
 	return vel;
 }
 
 // Call Back Function
+int imu_cnt = 0;
+const int imu_int = 1;
+double imu_total_time = 0;
 void imuCb(const sensor_msgs::Imu &msg)
 {
-	imucnt++;
-	if (imucnt % imuint != 0)
+	imu_cnt++;
+	ros::Time begin_time = ros::Time::now();
+	if (imu_cnt % imu_int != 0)
 		return;
 	// cout << "w: " << msg.orientation.w << ", x: " << msg.orientation.x << ", y: " << msg.orientation.y << ", z: " << msg.orientation.z << endl;
 	// cout << "ax: " << msg.linear_acceleration.x << ", ay: " << msg.linear_acceleration.y << ", az: " << msg.linear_acceleration.z << endl;
@@ -325,6 +339,11 @@ void imuCb(const sensor_msgs::Imu &msg)
 		// cout << "x_d=" << x_d << " y_d=" << y_d << " z_d=" << z_d << endl;
 		// cout << "vel_x=" << X_world.at<double>(0, 0) << " vel_y=" << X_world.at<double>(1, 0) << " vel_z=" << X_world.at<double>(2, 0) << endl;
 	}
+
+	imu_total_time += (ros::Time::now() - begin_time).toSec();
+	if (imu_cnt % 10 == 0) {
+		cout << "imu_cnt: " << imu_cnt << ", imu_total_time: " << imu_total_time << endl;
+	}
 };
 
 // Call Back Function
@@ -338,13 +357,15 @@ void floworbCb(const geometry_msgs::Point &msg)
 	{
 		im_vel = image_velocity(Tx_pyr, Ty_pyr, dt_pyr);
 		feature_msg.data = false;
-		cout << "pyramids" << endl;
+		pry_call_cnt++;
+		// cout << "pyramids" << endl;
 	}
 	else
 	{
 		im_vel = image_velocity(Tx, Ty, dt);
 		feature_msg.data = true;
-		cout << "orb" << endl;
+		orb_call_cnt++;
+		// cout << "orb" << endl;
 	}
 	lkf_update(im_vel, 1);
 	pub_feature.publish(feature_msg);
@@ -384,7 +405,7 @@ void lidarCb(const sensor_msgs::PointCloud2 &msg)
 		ds2 = pointCloud2ToZ(msg) - home_ds;
 		if (ds2 < 0.05)
 			ds2 = ds;
-		cout <<"distance is "<<ds2<<endl;
+		// cout <<"distance is "<<ds2<<endl;
 	}
 }
 //.........................................................

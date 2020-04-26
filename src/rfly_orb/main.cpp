@@ -159,7 +159,12 @@ Mat orb_features_projective(Mat I1, Mat I2){
 
 //.............................END.........................................
 // Call Back Function
+int orb_cnt = 0;
+double orb_total_time = 0;
 void imageCb(const sensor_msgs::ImageConstPtr& msg){
+	orb_cnt++;
+	ros::Time begin_time = ros::Time::now();
+
 	if(!co ){
 		co = true;
 		//ROS_INFO_STREAM(" Alhamdulilah" );  
@@ -214,6 +219,10 @@ void imageCb(const sensor_msgs::ImageConstPtr& msg){
 
 	}
 
+	orb_total_time += (ros::Time::now() - begin_time).toSec();
+	if (orb_cnt % 10 == 0) {
+		cout << "orb_cnt: " << orb_cnt << ", orb_total_time: " << orb_total_time << endl;
+	}
 };
  
 int main(int argc, char** argv)

@@ -240,7 +240,12 @@ return flow;
 
 //.............................END.........................................
 // Call Back Function
+int pyr_cnt = 0;
+double pyr_total_time = 0;
 void imageCb(const sensor_msgs::ImageConstPtr& msg){
+	pyr_cnt++;
+	ros::Time begin_time = ros::Time::now();
+
 	if(!co ){
 		co = true;
 		//ROS_INFO_STREAM(" Alhamdulilah" );  
@@ -286,6 +291,10 @@ void imageCb(const sensor_msgs::ImageConstPtr& msg){
 
 	}
 
+	pyr_total_time += (ros::Time::now() - begin_time).toSec();
+	if (pyr_cnt % 10 == 0) {
+		cout << "pyr_cnt: " << pyr_cnt << ", pyr_total_time: " << pyr_total_time << endl;
+	}
 };
  
 int main(int argc, char** argv)
