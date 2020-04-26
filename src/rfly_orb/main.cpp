@@ -99,13 +99,13 @@ Mat orb_features_projective(Mat I1, Mat I2){
 			}
 
 
-			// Show the good matches if you want
-			//Mat img_matches;
-			//drawMatches( I1, keypoints1, I2, keypoints2,
-			//good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
-			//vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
-			//-- Show detected matches
-			//imshow( OPENCV_WINDOW, img_matches );waitKey(3);
+			// // Show the good matches if you want
+			// Mat img_matches;
+			// drawMatches( I1, keypoints1, I2, keypoints2,
+			// 	good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
+			// 	vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+			// //-- Show detected matches
+			// imshow( OPENCV_WINDOW, img_matches );waitKey(1);
 
 
 			//-- Localize the object
