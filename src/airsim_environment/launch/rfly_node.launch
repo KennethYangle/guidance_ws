@@ -14,7 +14,8 @@
     <remap from="/sim/lidar" to="/airsim_node/Drone0/lidar/LidarSensor1"/>
   </node>
 
-  <node pkg="airsim_environment" type="velocity_control.py" name="trace"/>
+  <!-- <node pkg="airsim_environment" type="velocity_control.py" name="trace"/> -->
+  <include file="$(find airsim_keyboard_controller)/launch/keyboard_controller.launch"/>
   <node pkg="airsim_environment" type="result.py" name="result"/>
 
   <node name="pos_vel_plot" pkg="rqt_plot" type="rqt_plot" args="/airsim_node/Drone0/odom_local_ned/twist/twist/linear/x /rfly/velocity/point/x" />

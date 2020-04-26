@@ -77,7 +77,7 @@ lkf_constants calculate_lkf_constants(Mat Acc, Mat Cbe, double Ts)
 {
 	lkf_constants L;
 	Mat F = Acc;
-	double g = 1;
+	double g = 9.8;
 	Mat Ad = (Mat_<double>(7, 7) << 1, 0, 0, 0, -Ts, 0, 0, 0, 1, 0, 0, 0, -Ts, 0, 0, 0, 1, 0, 0, 0, -Ts, 0, 0, -Ts, 1, 0, 0, Ts * Ts / 2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1);
 
 	double c31 = Cbe.at<double>(2, 0);
