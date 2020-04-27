@@ -22,6 +22,7 @@ using namespace cv;
 // Create a publisher object for distance
 ros::Publisher pub_dist;
 geometry_msgs::PointStamped dist_msg;
+geometry_msgs::PointStamped dist_msg_pub;
 
 // Create a publisher object for velocity
 ros::Publisher pub_vel;
@@ -51,7 +52,7 @@ double y_d = 0;
 bool co1 = false;
 bool co2 = false;
 bool co3 = false;
-const int que_len = 10;
+const int que_len = 5;
 deque<geometry_msgs::PointStamped> dist_msg_que(que_len);
 deque<geometry_msgs::PointStamped> vel_msg_que(que_len);
 int orb_call_cnt = 0;
@@ -319,6 +320,10 @@ void imuCb(const sensor_msgs::Imu &msg)
 		dist_msg.point.z += (dist_msg_back.point.z - dist_msg_front.point.z) / que_len;
 		dist_msg_que.push_back(dist_msg_back);
 
+		dist_msg_pub = dist_msg;
+		dist_msg_pub.point.x = (dist_msg.point.x - 0.003*imu_cnt)*1.28;
+		dist_msg_pub.point.y = (dist_msg.point.y - 0.0026*imu_cnt)*1.2;
+
 		geometry_msgs::PointStamped vel_msg_back;
 		vel_msg_back.header = msg.header;
 		vel_msg_back.point.x = X_world.at<double>(0, 0);
@@ -444,7 +449,7 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(20);
 	while (ros::ok())
 	{
-		pub_dist.publish(dist_msg);
+		pub_dist.publish(dist_msg_pub);
 		pub_vel.publish(vel_msg);
 		ros::spinOnce();
 		loop_rate.sleep();
