@@ -5,7 +5,7 @@
 
 This repository provides a code base to simulation and flight experiment codes from the paper "*Global optical flow-based estimation of velocity for multicopters using monocular vision in GPS-denied environments*". 
 
-Paper video: https://youtu.be/RUCoJWjlo0w
+Paper video: [1] https://youtu.be/RUCoJWjlo0w  [2] https://youtu.be/ZHzTNDAerCc
 
 ## License and Citation
 This project is licensed under the terms of the MIT license. By using the software, you are agreeing to the terms of the [license agreement](LICENSE).
