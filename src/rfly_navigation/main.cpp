@@ -1,8 +1,14 @@
 // include ROS Libraries
 #include <ros/ros.h>
 #include <geometry_msgs/Point.h>
+#include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <sensor_msgs/Imu.h>
 #include <sensor_msgs/LaserScan.h>
+#include <sensor_msgs/PointCloud.h>
+#include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/point_cloud_conversion.h>
+#include <std_msgs/Bool.h>
 // OpenCV Libraries
 #include <opencv2/opencv.hpp>
 #include "opencv2/imgproc/imgproc.hpp"
@@ -18,11 +24,11 @@ using namespace cv;
 
 // Create a publisher object for distance
 ros::Publisher pub_dist;
-geometry_msgs::Point dist_msg;
+geometry_msgs::PointStamped dist_msg;
 
 // Create a publisher object for velocity
 ros::Publisher pub_vel;
-geometry_msgs::Point vel_msg;
+geometry_msgs::PointStamped vel_msg;
 
 // Initialising Certain constant Matrices
 
@@ -38,7 +44,7 @@ Mat w = Mat::zeros(3,1,CV_64FC1);
 Mat camera_param = (Mat_<double>(3,3) <<334.4204,0,149.4593,0,333.4688,114.9624,0,0,1);
 
 double R1 = 0.1;
-double a,b,c,d,a1,b1,c1,d1,ds,ds2,time1,time2,delt;
+double a,b,c,d,a1,b1,c1,d1,home_ds,ds,ds2,time1,time2,delt;
 double x_d = 0; 
 double y_d = 0;
 bool co1 = false;
@@ -193,7 +199,7 @@ return vel;
 }
 
 // Call Back Function
-void imuCb(const geometry_msgs::TransformStamped& msg){
+void imuCb(const sensor_msgs::Imu &msg){
 
 	if(!co1 ){
 	//	std_msgs::Header h = msg->header;
@@ -212,20 +218,22 @@ void imuCb(const geometry_msgs::TransformStamped& msg){
 		time2 = sec + nsec/1000000000;
 		delt = time2-time1;
 
-		double acc1 = msg.transform.translation.x;
-		double acc2 = msg.transform.translation.y;
-		double acc3 = msg.transform.translation.z;
+		double acc1 = msg.linear_acceleration.x;
+		double acc2 = msg.linear_acceleration.y;
+		double acc3 = msg.linear_acceleration.z;
 		Mat Acc = (Mat_<double>(3,1) << acc1,acc2,acc3);
 
 		a1 = a; b1 = b; c1 = c;d1 = d;
-		a = msg.transform.rotation.w;
-		b = msg.transform.rotation.x;
-		c = msg.transform.rotation.y;
-		d = msg.transform.rotation.z;
+		a = msg.orientation.w;
+		b = msg.orientation.x;
+		c = msg.orientation.y;
+		d = msg.orientation.z;
 
 		Cbe2.copyTo(Cbe1);
 		Cbe2 =  getrotation(a,b,c,d);
-		w = quat2rate(delt,a,b,c,d,a1,b1,c1,d1);
+		w.at<double>(0, 0) = msg.angular_velocity.x;
+		w.at<double>(1, 0) = msg.angular_velocity.y;
+		w.at<double>(2, 0) = msg.angular_velocity.z;
 		
 		lkf_constants lkc = calculate_lkf_constants(Acc, Cbe2, delt);
 		lkf_predict(lkc.Ad, lkc.G);
@@ -243,15 +251,16 @@ void imuCb(const geometry_msgs::TransformStamped& msg){
 
 		x_d = x_ds + delt*X_world.at<double>(0,0);
 		y_d = y_ds + delt*X_world.at<double>(1,0);
-		double z_d = X.at<double>(3,0);
+		double z_d = -X.at<double>(3,0);
 
-		dist_msg.x = x_d;
-		dist_msg.y = y_d;
-		dist_msg.z = z_d;
+		dist_msg.header = msg.header;
+		dist_msg.point.x = x_d;
+		dist_msg.point.y = y_d;
+		dist_msg.point.z = z_d;
 
-		vel_msg.x = X_world.at<double>(0,0);
-		vel_msg.y = X_world.at<double>(1,0);
-		vel_msg.z = X_world.at<double>(2,0);
+		vel_msg.point.x = X_world.at<double>(0,0);
+		vel_msg.point.y = X_world.at<double>(1,0);
+		vel_msg.point.z = X_world.at<double>(2,0);
 
 		pub_dist.publish(dist_msg);
 		pub_vel.publish(vel_msg);
@@ -273,24 +282,36 @@ void flowCb(const geometry_msgs::Point& msg){
 
 };
 
-void ultCb(const sensor_msgs::LaserScan& msg){
+double pointCloud2ToZ(const sensor_msgs::PointCloud2 &msg)
+{
+	sensor_msgs::PointCloud out_pointcloud;
+	sensor_msgs::convertPointCloud2ToPointCloud(msg, out_pointcloud);
+	// for (int i=0; i<out_pointcloud.points.size(); i++) {
+	// 	cout << out_pointcloud.points[i].x << ", " << out_pointcloud.points[i].y << ", " << out_pointcloud.points[i].z << endl;
+	// }
+	cout << "------" << endl;
+	return out_pointcloud.points[0].z;
+}
 
-	if(!co2 ){
-		vector<float> data = msg.ranges;
-		ds2 = data[0];
+void lidarCb(const sensor_msgs::PointCloud2 &msg)
+{
+	if (!co2)
+	{
+		// calibrate in different home point
+		home_ds = 1.195547;
+		ds2 = 0;
 		ds = ds2;
 		co2 = true;
 	}
-	else{	
+	else
+	{
 		ds = ds2;
-		vector<float> data = msg.ranges;
-		ds2 = data[0];
-		if (ds2<0.05 || ds2>20)
+		ds2 = pointCloud2ToZ(msg) - home_ds;
+		if (ds2 < 0.05)
 			ds2 = ds;
-		//cout <<"distance is "<<ds2<<endl;
+		// cout <<"distance is "<<ds2<<endl;
 	}
 }
-//.........................................................
 
 int main(int argc, char** argv){
 	a=1; b = 0;  c = 0;  d = 0;
@@ -302,11 +323,11 @@ int main(int argc, char** argv){
 //create a ros node handle
 	ros::NodeHandle nh;
 	ros::Subscriber sub1 = nh.subscribe( "guidance/imu" , 1 , &imuCb);//guidance/left_image
-	ros::Subscriber sub2 = nh.subscribe( "guidance/ultrasonic" , 1 , &ultCb);//guidance/left_image
+	ros::Subscriber sub2 = nh.subscribe( "guidance/lidar" , 1 , &lidarCb);//guidance/left_image
 	ros::Subscriber sub3 = nh.subscribe( "rfly/phase" , 1 , &flowCb);//guidance/left_image
 
-	pub_dist = nh.advertise<geometry_msgs::Point> ( "rfly/dist", 1);
-	pub_vel = nh.advertise<geometry_msgs::Point> ( "rfly/velocity", 1);
+	pub_dist = nh.advertise<geometry_msgs::PointStamped> ( "rfly/dist", 1);
+	pub_vel = nh.advertise<geometry_msgs::PointStamped> ( "rfly/velocity", 1);
 	ros::spin();
 }
 
