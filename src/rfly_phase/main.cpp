@@ -259,7 +259,12 @@ Mat correlation_flow(Mat I1, Mat I2, Mat hann){
 
 //.............................END Phase Correlation Method.........................................
 // ****************************Call Back Function***************************************************
+int phase_cnt = 0;
+double phase_total_time = 0;
 void imageCb(const sensor_msgs::ImageConstPtr& msg){
+	phase_cnt++;
+	ros::Time begin_time = ros::Time::now();
+
 	if(!co ){
 		co = true;
 		//ROS_INFO_STREAM(" Alhamdulilah" );  
@@ -331,9 +336,12 @@ void imageCb(const sensor_msgs::ImageConstPtr& msg){
 
 		cv_ptr_I2->image.copyTo(cv_ptr_I1->image);
 		time1 = time2;
-
 	}
 
+	phase_total_time += (ros::Time::now() - begin_time).toSec();
+	if (phase_cnt % 10 == 0) {
+		cout << "phase_cnt: " << phase_cnt << ", phase_total_time: " << phase_total_time << endl;
+	}
 };
 // ****************************END Call Back Function********************************************* 
 // ++++++++++++++++++++++++++++Start Main Function++++++++++++++++++++++++++++++++++++++++++++++++ 
