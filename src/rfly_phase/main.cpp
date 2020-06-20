@@ -302,24 +302,10 @@ void imageCb(const sensor_msgs::ImageConstPtr& msg){
 		cc = cc+1; cout<<cc<<endl;
 
 		Mat flow_co = correlation_flow(cv_ptr_I1->image, cv_ptr_I2->image, hann);
-		Mat flow_pyramids = pyramids(cv_ptr_I1->image, cv_ptr_I2->image);
+		// Mat flow_pyramids = pyramids(cv_ptr_I1->image, cv_ptr_I2->image);
 
-		double a = flow_co.at<float>(0,0); double b = flow_co.at<float>(1,0);
-		double radius = std::sqrt(a*a + b*b);
-		
-		if( radius < 5 )
-			{
-			tform_msg.x = 1.8*(flow_pyramids.at<float>(0,0));
-			tform_msg.y = 1.8*(flow_pyramids.at<float>(1,0));
-			
-			}
-		else
-			{
-			tform_msg.x = 1.4*(flow_co.at<float>(0,0));
-			tform_msg.y = 1.4*(flow_co.at<float>(1,0));
-			}
-
-
+		tform_msg.x = 1.4*(flow_co.at<float>(0,0));
+		tform_msg.y = 1.4*(flow_co.at<float>(1,0));
 		tform_msg.z = delt;
 
 		cout<< "X_flow "<<tform_msg.x<<"Y_flow "<<tform_msg.y<<endl;

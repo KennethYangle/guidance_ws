@@ -316,8 +316,11 @@ void imuCb(const sensor_msgs::Imu &msg)
 		dist_msg_que.push_back(dist_msg_back);
 
 		dist_msg_pub = dist_msg;
-		dist_msg_pub.point.x = (dist_msg.point.x - 0.003*imu_cnt)*1.28;
-		dist_msg_pub.point.y = (dist_msg.point.y - 0.0026*imu_cnt)*1.2;
+		// dist_msg_pub.point.x = (dist_msg.point.x - 0.003*imu_cnt)*1.28;
+		// dist_msg_pub.point.y = (dist_msg.point.y - 0.0026*imu_cnt)*1.2;
+		dist_msg_pub.point.x = (dist_msg.point.x + 0.0022*imu_cnt)/1.42;
+		dist_msg_pub.point.y = (dist_msg.point.y - 0.0020*imu_cnt)/1.33;
+		dist_msg_pub.point.z += 0.8;
 
 		geometry_msgs::PointStamped vel_msg_back;
 		vel_msg_back.header = msg.header;
