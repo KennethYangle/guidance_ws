@@ -1,0 +1,66 @@
+{
+  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+  "SettingsVersion": 1.2,
+  "SimMode": "Multirotor",
+  "ViewMode": "",
+  "ClockSpeed": 1.0,
+  "Vehicles": {
+    "Drone0": {
+      "VehicleType": "SimpleFlight",
+      "DefaultVehicleState": "Armed",
+      "EnableCollisionPassthrogh": false,
+      "EnableCollisions": true,
+      "AllowAPIAlways": true,
+      "RC": {
+        "RemoteControlID": 0,
+        "AllowAPIWhenDisconnected": false
+      },
+      "Sensors": {
+	"Barometer" : {
+          "SensorType": 1,
+          "Enabled": true
+	},
+        "Imu" : {
+          "SensorType": 2,
+          "Enabled": true
+        },
+	"LidarSensor1": { 
+	  "SensorType": 6,
+	  "Enabled" : true,
+	  "NumberOfChannels": 1,
+	  "RotationsPerSecond": 10,
+	  "PointsPerSecond": 1000,
+	  "X": 0, "Y": 0, "Z": -1,
+	  "Roll": 0, "Pitch": 0, "Yaw" : 0,
+	  "VerticalFOVUpper": -90,
+	  "VerticalFOVLower": -90,
+	  "HorizontalFOVStart": -5,
+	  "HorizontalFOVEnd": 5,
+	  "DrawDebugPoints": false,
+	  "DataFrame": "SensorLocalFrame"
+        }
+      },
+      "Cameras": {
+        "UnderView": {
+          "CaptureSettings": [
+            {
+              "PublishToRos": 1,
+              "ImageType": 0,
+              "Width": 320,
+              "Height": 240,
+              "FOV_Degrees": 53,
+              "TargetGamma": 1.5
+            }
+          ],
+          "X": 0.50, "Y": 0, "Z": 0,
+          "Pitch": -90, "Roll": 0, "Yaw": 0
+        }
+      },
+      "X": 0, "Y": 0, "Z": -2,
+      "Pitch": 0, "Roll": 0, "Yaw": 0
+    }
+  },
+  "SubWindows": [
+    {"WindowID": 2, "ImageType": 0, "CameraName": "UnderView", "Visible": true}
+  ]
+}

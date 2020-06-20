@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <launch>
+  <arg name="folder" default=""/>
   <include file="$(find airsim_keyboard_controller)/launch/keyboard_controller.launch"/>
-  <node pkg="rosbag" type="record" name="bag_record" args="/airsim_node/Drone0/vel_cmd_body_frame -O $(find airsim_environment)/bag/tel.bag"/>
+  <node pkg="rosbag" type="record" name="bag_record" args="/airsim_node/Drone0/vel_cmd_body_frame -O $(find airsim_environment)/bag/$(arg folder)/tel.bag"/>
 </launch>
