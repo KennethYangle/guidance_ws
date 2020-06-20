@@ -14,7 +14,7 @@
   </node>
 
   <node pkg="airsim_environment" type="result.py" name="result"/>
-  <node pkg="rosbag" type="record" name="bag_record" args="-a -O $(find airsim_environment)/bag/$(arg folder)/data.bag"/>
+  <node pkg="rosbag" type="record" name="bag_record" args="-a -O $(find airsim_environment)/bag/$(arg folder)/data_phase.bag"/>
 
   <node name="underview" pkg="rqt_image_view" type="rqt_image_view" args="/airsim_node/Drone0/UnderView/Scene"/>
 </launch>

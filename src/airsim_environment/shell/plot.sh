@@ -15,4 +15,4 @@ then
     exit 1
 fi
 
-rosrun plotjuggler PlotJuggler -d ~/guidance_ws/src/airsim_environment/bag/$1/data.bag -l ~/guidance_ws/src/airsim_environment/juggler/plot.xml
+rosrun plotjuggler PlotJuggler -d ~/guidance_ws/src/airsim_environment/bag/$1/data_phase.bag -l ~/guidance_ws/src/airsim_environment/juggler/plot.xml
