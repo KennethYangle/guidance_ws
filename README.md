@@ -3,7 +3,7 @@
 ![outdoor](figs/realSettings.jpg) 
 ![sim](figs/sim.gif)
 
-This repository provides a code base to simulation and flight experiment codes from the paper "*Global optical flow-based estimation of velocity for multicopters using monocular vision in GPS-denied environments*". 
+This repository provides a code base to simulation and flight experiment codes from the paper "*Deng H, Arif U, Yang K, et al. Global optical flow-based estimation of velocity for multicopters using monocular vision in GPS-denied environments[J]. Optik, 2020: 164923.*". 
 
 Paper video: [1] https://youtu.be/RUCoJWjlo0w  [2] https://youtu.be/ZHzTNDAerCc
 
