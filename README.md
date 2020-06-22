@@ -1,11 +1,11 @@
-# Global optical flow-based estimation of velocity for multicopters using monocular vision in GPS-denied environments
+# Velocity Estimation of a Multicopter Using Monocular Camera Based on Phase Correlation and Optical Flow
 
-![outdoor](figs/realSettings.jpg) 
-![sim](figs/sim.gif)
+<center class="half">
+    <img src="figs/building.gif" width="320"/><img src="figs/bedroom.gif" width="320"/><img src="figs/soccer.gif" width="320"/><img src="figs/mountain.gif" width="320"/>
+</center>
 
-This repository provides a code base to simulation and flight experiment codes from the paper "*Global optical flow-based estimation of velocity for multicopters using monocular vision in GPS-denied environments*". 
+This repository provides a code base to simulation and flight experiment codes from the paper "*Velocity Estimation of a Multicopter Using Monocular Camera Based on Phase Correlation and Optical Flow*". 
 
-Paper video: [1] https://youtu.be/RUCoJWjlo0w  [2] https://youtu.be/ZHzTNDAerCc
 
 ## License and Citation
 This project is licensed under the terms of the MIT license. By using the software, you are agreeing to the terms of the [license agreement](LICENSE).
@@ -43,16 +43,16 @@ In order for you to simulation the velocity estimation you first need to install
   If you use a custom environment, remember to modify `*.json` under `settings` folder and modify the environment path in `*.sh`.
 - In the real flight experiment, the computer only needs to run the velocity estimation algorithms. Therefore, we recommend that the simulation environment and the velocity estimation algorithms be run separately.
     ```
+    # environment_name is one of (building, neighborhood, soccer, mountain)
     # Use the keyboard to control the drone
-    ./teleop.sh
+    ./teleop.sh environment_name
     # Collect visual data
-    ./record.sh
+    ./record.sh environment_name
     # Run the velocity estimation algorithm
-    ./play.sh
+    ./play.sh environment_name
     # View in PlotJuggler
-    ./plot
+    ./plot environment_name
     ```
-![sim_graph](figs/sim_graph.png)
 
 ### Flight experiment
 In the real flight experiment, you need to prepare the hardwares and compile the [Gudiance-SDK-ROS](https://github.com/dji-sdk/Guidance-SDK-ROS) in advance.
@@ -62,7 +62,6 @@ The Matrice 100 is equipped with a Guidance unit, which consists of stereo camer
 ```
 roslaunch rfly_launch main.launch
 ```
-![real_graph](figs/real_graph.png)
 
 # Contributing
 
