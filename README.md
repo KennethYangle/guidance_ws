@@ -1,10 +1,13 @@
-# Velocity Estimation of a Multicopter Using Monocular Camera Based on Phase Correlation and Optical Flow
-
+# A Visual-Inertial-Based Framework for Velocity Estimation of Multicopters
+<!-- 
 <center class="half">
     <img src="figs/building.gif" width="320"/><img src="figs/bedroom.gif" width="320"/><img src="figs/soccer.gif" width="320"/><img src="figs/mountain.gif" width="320"/>
-</center>
+</center> -->
 
-This repository provides a code base to simulation and flight experiment codes from the paper "*Velocity Estimation of a Multicopter Using Monocular Camera Based on Phase Correlation and Optical Flow*". 
+![](figs/building.gif)![](figs/bedroom.gif)![](figs/soccer.gif)![](figs/mountain.gif)
+
+![](figs/real.png)
+This repository provides a code base to simulation and flight experiment codes from the paper "*A Visual-Inertial-Based Framework for Velocity Estimation of Multicopters*". 
 
 
 ## License and Citation
