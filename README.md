@@ -11,6 +11,16 @@ Paper video: [1] https://youtu.be/RUCoJWjlo0w  [2] https://youtu.be/ZHzTNDAerCc
 This project is licensed under the terms of the MIT license. By using the software, you are agreeing to the terms of the [license agreement](LICENSE).
 
 If you use this code in your research, please cite us.
+```
+@article{deng2020global,
+  title={Global optical flow-based estimation of velocity for multicopters using monocular vision in GPS-denied environments},
+  author={Deng, Heng and Arif, Usman and Yang, Kun and Xi, Zhiyu and Quan, Quan and Cai, Kai-Yuan},
+  journal={Optik},
+  pages={164923},
+  year={2020},
+  publisher={Elsevier}
+}
+```
 
 ## Recommended system
 Recommended system (tested):
