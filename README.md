@@ -26,12 +26,16 @@ If you use this code in your research, please cite us.
 Recommended system (tested):
 - Ubuntu 16.04
 - ROS Kinetic
+- AirSim 1.2.8
 - Python 2.7.12
 - OpenCV 3.3.1
 
 ROS packages used by the example provided and their recommended version:
 - [airsim_ros_pkgs(Simulation)](https://github.com/microsoft/AirSim/tree/master/ros/src/airsim_ros_pkgs)
 - [Gudiance-SDK-ROS(Flight experiment)](https://github.com/dji-sdk/Guidance-SDK-ROS)
+
+Remark:
+UE4 is not required if you don't need a custom scene. You can download the binaries from AirSim releases.
 
 ## How to use
 Clone the repo to the workspace source directory guidance_ws and then
