@@ -7,6 +7,7 @@
 ![](figs/building.gif)![](figs/bedroom.gif)![](figs/soccer.gif)![](figs/mountain.gif)
 
 ![](figs/real.png)
+
 This repository provides a code base to simulation and flight experiment codes from the paper "*Fourier-based Image Phase Correlation Method for Velocity Estimation of Multicopters*". 
 
 
@@ -35,6 +36,8 @@ source ~/guidance_ws/devel/setup.bash
 ```
 
 ### Simulation
+![](figs/simulationResults.gif)
+
 In order for you to simulation the velocity estimation you first need to install AirSim.
 - [Build AirSim on Linux](https://microsoft.github.io/AirSim/build_linux/)
 - (Optional) [Download the binaries](https://github.com/microsoft/AirSim/releases) for the environment you like. We test in `Neighborhood`
