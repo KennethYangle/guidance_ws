@@ -8,7 +8,7 @@
 
 ![](figs/real.png)
 
-This repository provides a code base to simulation and flight experiment codes from the paper "*Fourier-based Image Phase Correlation Method for Velocity Estimation of Multicopters*". 
+This repository provides a code base to simulation and flight experiment codes from the paper "*Absolute velocity estimation for multicopters based on phase correlation and monocular vision in unknown GPS-denied environments*". 
 
 
 ## License and Citation
